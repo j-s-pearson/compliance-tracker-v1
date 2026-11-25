@@ -5,7 +5,7 @@ def register_add(parser: _SubParsersAction,  handler):
     add_parser: ArgumentParser = parser.add_parser("add", help="adds a document")
     add_parser.add_argument(
         "-t", "--title",
-        nargs='*',
+        nargs=1,
         required=True,
         help="The name of the document"
     )
@@ -17,9 +17,7 @@ def register_add(parser: _SubParsersAction,  handler):
     )
     add_parser.add_argument(
         "-n", "--notify",
-        nargs=1,
         default=30,
         type= int,
-        required=True,
         help="The number of days you want to be notified before expiration. Default to 30 days.")
     add_parser.set_defaults(handler=handler)
