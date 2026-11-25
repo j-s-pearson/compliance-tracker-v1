@@ -1,4 +1,5 @@
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 
@@ -16,8 +17,6 @@ class Database:
         connection_path.parent.mkdir(exist_ok=True)
 
     def __up(self) -> None:
-        con = self.__get_connection()
-        cur = con.cursor()
         document_cmd = """
         CREATE TABLE IF NOT EXISTS documents(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,13 +28,10 @@ class Database:
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );"""
-        cur.execute(document_cmd)
-        con.close()
+        with closing(self.__get_connection()) as con, con:
+            con.execute(document_cmd)
 
     def add(self, title: str, expires: str, notify: int, status: str, now: str) -> None:
-        con = self.__get_connection()
-        cur = con.cursor()
-
         add_smt = """
         INSERT INTO documents (
             title, expires_at, notify_at, status, created_at, updated_at
@@ -43,7 +39,5 @@ class Database:
             ?, ?, ?, ?, ?, ?
         );"""
 
-        cur.execute(add_smt, (title, expires, notify, status, now, now))
-
-        con.commit()
-        con.close()
+        with closing(self.__get_connection()) as con, con:
+            con.execute(add_smt, (title, expires, notify, status, now, now))
