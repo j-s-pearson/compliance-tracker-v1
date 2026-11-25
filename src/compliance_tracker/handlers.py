@@ -18,5 +18,5 @@ def handler_add(args: Namespace, db: Database) -> None:
     try:
         db.add(args.title, args.expires, args.notify, status, now)
     except sqlite3.Error as e:
-        print(f"Error adding document: {e.sqlite_errorname}")
+        print(f"problem when adding document: {e}")
         return

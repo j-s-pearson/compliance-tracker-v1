@@ -23,11 +23,27 @@ class Database:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             expires_at TEXT NOT NULL,
-            notify_at TEXT NOT NULL,
+            notify_at INTEGER NOT NULL,
             status TEXT NOT NULL,
             last_notified TEXT,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );"""
         cur.execute(document_cmd)
+        con.close()
+
+    def add(self, title: str, expires: str, notify: int, status: str, now: str) -> None:
+        con = self.__get_connection()
+        cur = con.cursor()
+
+        add_smt = """
+        INSERT INTO documents (
+            title, expires_at, notify_at, status, created_at, updated_at
+        ) VALUES(
+            ?, ?, ?, ?, ?, ?
+        );"""
+
+        cur.execute(add_smt, (title, expires, notify, status, now, now))
+
+        con.commit()
         con.close()
