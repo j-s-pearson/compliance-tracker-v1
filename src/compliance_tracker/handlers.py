@@ -2,10 +2,9 @@ import sqlite3
 from argparse import Namespace
 
 from compliance_tracker.date_helpers import date_to_iso, get_now_iso, is_before_now
-from compliance_tracker.db import Database
 
 
-def handler_add(args: Namespace, db: Database) -> None:
+def handler_add(args: Namespace, callback) -> None:
     try:
         args.expires = date_to_iso(args.expires)
     except ValueError as e:
@@ -16,7 +15,7 @@ def handler_add(args: Namespace, db: Database) -> None:
     now = get_now_iso()
 
     try:
-        db.add(args.title, args.expires, args.notify, status, now)
+        callback(args.title, args.expires, args.notify, status, now)
     except sqlite3.Error as e:
         print(f"problem when adding document: {e}")
         return

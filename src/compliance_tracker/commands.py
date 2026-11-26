@@ -1,7 +1,8 @@
 from argparse import ArgumentParser, _SubParsersAction
+from functools import partial
 
 
-def register_add(parser: _SubParsersAction,  handler):
+def register_add(parser: _SubParsersAction,  handler, callback):
     add_parser: ArgumentParser = parser.add_parser("add", help="adds a document")
     add_parser.add_argument(
         "-t", "--title",
@@ -20,4 +21,5 @@ def register_add(parser: _SubParsersAction,  handler):
         default=30,
         type=int,
         help="The number of days you want to be notified before expiration. Default to 30 days.")
-    add_parser.set_defaults(handler=handler)
+
+    add_parser.set_defaults(handler = partial(handler, callback=callback))

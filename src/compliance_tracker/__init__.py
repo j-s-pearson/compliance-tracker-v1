@@ -12,10 +12,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Track document expiration dates."
     )
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers = parser.add_subparsers(required=True)
-
-    register_add(subparsers, handler_add)
+    register_add(subparsers, handler_add, db.add)
 
     args = parser.parse_args()
-    args.handler(args, db)
+    args.handler(args)
