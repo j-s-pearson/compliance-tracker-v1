@@ -1,5 +1,5 @@
 import sqlite3
-from contextlib import closing
+from contextlib import closing, contextmanager
 from pathlib import Path
 
 
@@ -16,6 +16,11 @@ class Database:
         connection_path = Path(self.__connection_string)
         connection_path.parent.mkdir(exist_ok=True)
 
+    @contextmanager
+    def __transaction(self):
+        with closing(self.__get_connection()) as con, con:
+            yield con
+
     def __up(self) -> None:
         document_cmd = """
         CREATE TABLE IF NOT EXISTS documents(
@@ -28,7 +33,7 @@ class Database:
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );"""
-        with closing(self.__get_connection()) as con, con:
+        with self.__transaction() as con:
             con.execute(document_cmd)
 
     def add(self, title: str, expires: str, notify: int, status: str, now: str) -> None:
@@ -39,5 +44,5 @@ class Database:
             ?, ?, ?, ?, ?, ?
         );"""
 
-        with closing(self.__get_connection()) as con, con:
+        with self.__transaction() as con:
             con.execute(add_smt, (title, expires, notify, status, now, now))
