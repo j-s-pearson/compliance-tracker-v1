@@ -21,8 +21,13 @@ class Database:
         with closing(self.__get_connection()) as con, con:
             yield con
 
+    @contextmanager
+    def __read(self):
+        with closing(self.__get_connection()) as con:
+            yield con
+
     def __up(self) -> None:
-        document_cmd = """
+        document_stmt = """
         CREATE TABLE IF NOT EXISTS documents(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -34,10 +39,10 @@ class Database:
             updated_at TEXT NOT NULL
         );"""
         with self.__transaction() as con:
-            con.execute(document_cmd)
+            con.execute(document_stmt)
 
     def add(self, title: str, expires: str, notify: int, status: str, now: str) -> None:
-        add_smt = """
+        add_stmt = """
         INSERT INTO documents (
             title, expires_at, notify_at, status, created_at, updated_at
         ) VALUES(
@@ -45,4 +50,11 @@ class Database:
         );"""
 
         with self.__transaction() as con:
-            con.execute(add_smt, (title, expires, notify, status, now, now))
+            con.execute(add_stmt, (title, expires, notify, status, now, now))
+
+    def list(self) -> list:
+        select_stmt = "SELECT id, title, expires_at, notify_at, status FROM documents"
+
+        with self.__read() as con:
+            cur = con.execute(select_stmt)
+            return cur.fetchall()
