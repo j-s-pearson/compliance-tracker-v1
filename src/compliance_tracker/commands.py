@@ -24,7 +24,7 @@ def register_add(parser: _SubParsersAction,  handler: Callable[..., Any], callba
         type=int,
         help="The number of days you want to be notified before expiration. Default to 30 days.")
 
-    add_parser.set_defaults(handler = partial(handler, callback=callback))
+    add_parser.set_defaults(handler = partial(handler, callback=callback), status = None)
 
 def register_list(parser: _SubParsersAction, handler: Callable[..., Any], callback: Callable[..., Any]) -> None:
     list_parser: ArgumentParser = parser.add_parser("list", help="list all documents")
