@@ -1,8 +1,10 @@
+from _collections_abc import Callable
 from argparse import ArgumentParser, _SubParsersAction
 from functools import partial
+from typing import Any
 
 
-def register_add(parser: _SubParsersAction,  handler, callback) -> None:
+def register_add(parser: _SubParsersAction,  handler: Callable[..., Any], callback: Callable[..., Any]) -> None:
     add_parser: ArgumentParser = parser.add_parser("add", help="adds a document")
     add_parser.add_argument(
         "-t", "--title",
@@ -24,13 +26,13 @@ def register_add(parser: _SubParsersAction,  handler, callback) -> None:
 
     add_parser.set_defaults(handler = partial(handler, callback=callback))
 
-def register_list(parser: _SubParsersAction, handler, callback) -> None:
+def register_list(parser: _SubParsersAction, handler: Callable[..., Any], callback: Callable[..., Any]) -> None:
     list_parser: ArgumentParser = parser.add_parser("list", help="list all documents")
 
     list_parser.set_defaults(handler = partial(handler, callback=callback))
 
 
-def register_update(parser: _SubParsersAction, handler, callback) -> None:
+def register_update(parser: _SubParsersAction, handler: Callable[..., Any], callback: Callable[..., Any]) -> None:
     update_parser: ArgumentParser = parser.add_parser("update", help="update a document specified by it's id")
     update_parser.add_argument(
         "-i", "--id",

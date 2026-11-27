@@ -1,10 +1,12 @@
 import sqlite3
+from _collections_abc import Callable
 from argparse import Namespace
+from typing import Any
 
 from compliance_tracker.date_helpers import date_to_iso, get_now_iso, is_before_now
 
 
-def handler_add(args: Namespace, callback) -> None:
+def handler_add(args: Namespace, callback: Callable[..., Any]) -> None:
     try:
         args.expires = date_to_iso(args.expires)
     except ValueError as e:
@@ -20,8 +22,8 @@ def handler_add(args: Namespace, callback) -> None:
         print(f"problem when adding document: {e}")
         return
 
-def handler_list(args: Namespace, callback) -> None:
-    documents = callback()
+def handler_list(args: Namespace, callback: Callable[..., Any]) -> None:
+    documents: list[Any] = callback()
 
     if len(documents) == 0:
         print("no documents...")
@@ -34,7 +36,7 @@ def handler_list(args: Namespace, callback) -> None:
         print(f"{doc[0]:^3} | {doc[1]:<25} | {doc[2]:^10} | {doc[3]:^10} | {doc[4]:^10}")
     print("-" * 70)
 
-def handler_update(args: Namespace, callback) -> None:
+def handler_update(args: Namespace, callback: Callable[..., Any]) -> None:
     if args.title == None and args.expires == None and args.notify == None:
         print("nothing specified to update, expected at least a title, expiration date, or notification period")
         return
