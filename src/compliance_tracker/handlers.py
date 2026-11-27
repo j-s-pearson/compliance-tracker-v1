@@ -10,6 +10,7 @@ def handler_add(args: Namespace, callback: Callable[..., Any]) -> None:
     args.title = args.title.strip()
     if args.title == "":
         print("document title cannot be empty")
+        return
 
     try:
         args.expires = date_to_iso(args.expires)
@@ -67,4 +68,15 @@ def handler_update(args: Namespace, callback: Callable[..., Any]) -> None:
 
     updated_at = get_now_iso()
 
-    callback(args.id, args.title, args.expires, args.notify, args.status, updated_at)
+    try:
+        callback(args.id, args.title, args.expires, args.notify, args.status, updated_at)
+    except sqlite3.Error as e:
+        print(f"problem updating document: {e}")
+        return
+
+def handler_delete(args: Namespace, callback: Callable[..., Any]) -> None:
+    try:
+        callback(args.id)
+    except sqlite3.Error as e:
+        print(f"problem deleting document: {e}")
+        return

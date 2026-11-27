@@ -16,6 +16,7 @@ def main() -> None:
 
     register_add(subparsers, handler_add, db.add)
     register_list(subparsers, handler_list, db.list)
+    register_delete(subparsers, handler_delete, db.delete)
     register_update(subparsers, handler_update, db.update)
 
     args = parser.parse_args()

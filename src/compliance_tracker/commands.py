@@ -60,3 +60,15 @@ def register_update(parser: _SubParsersAction, handler: Callable[..., Any], call
     )
 
     update_parser.set_defaults(handler = partial(handler, callback=callback), status=None)
+
+
+def register_delete(parser: _SubParsersAction, handler: Callable[..., Any], callback: Callable[..., Any]) -> None:
+    del_parser: ArgumentParser = parser.add_parser("del", help = "delete a document by ID")
+    del_parser.add_argument(
+        "-i", "--id",
+        required = True,
+        type = int,
+        help = "the document ID, use the list command if you need to get the ID"
+    )
+
+    del_parser.set_defaults(handler = partial(handler, callback=callback))

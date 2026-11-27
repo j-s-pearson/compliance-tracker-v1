@@ -85,3 +85,9 @@ class Database:
 
         with self.__transaction() as con:
             con.execute(update_stmt, params)
+
+    def delete(self, id:int) -> None:
+        delete_stmt = "DELETE FROM documents WHERE id = ?"
+
+        with self.__transaction() as con:
+            con.execute(delete_stmt, (id,))
