@@ -58,3 +58,30 @@ class Database:
         with self.__read() as con:
             cur = con.execute(select_stmt)
             return cur.fetchall()
+
+    def update(self, id: int, title: str|None, expires_at: str|None, notify_at: str|None, status: str|None, updated_at: str) -> None:
+        update_stmt = "UPDATE documents SET\n"
+        params = ()
+
+        if title:
+            update_stmt += "\ttitle = ?,\n"
+            params += (title,)
+
+        if expires_at:
+            update_stmt += "\texpires_at = ?,\n"
+            params += (expires_at,)
+
+        if notify_at:
+            update_stmt += "\tnotify_at = ?,\n"
+            params += (notify_at,)
+
+        if status:
+            update_stmt += "\tstatus = ?,\n"
+            params += (status,)
+
+        update_stmt += "\tupdated_at = ?\n"
+        update_stmt += "WHERE id = ?;"
+        params += (updated_at, id)
+
+        with self.__transaction() as con:
+            con.execute(update_stmt, params)

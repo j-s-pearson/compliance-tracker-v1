@@ -2,7 +2,7 @@ from argparse import ArgumentParser, _SubParsersAction
 from functools import partial
 
 
-def register_add(parser: _SubParsersAction,  handler, callback):
+def register_add(parser: _SubParsersAction,  handler, callback) -> None:
     add_parser: ArgumentParser = parser.add_parser("add", help="adds a document")
     add_parser.add_argument(
         "-t", "--title",
@@ -24,7 +24,37 @@ def register_add(parser: _SubParsersAction,  handler, callback):
 
     add_parser.set_defaults(handler = partial(handler, callback=callback))
 
-def register_list(parser: _SubParsersAction, handler, callback):
+def register_list(parser: _SubParsersAction, handler, callback) -> None:
     list_parser: ArgumentParser = parser.add_parser("list", help="list all documents")
 
     list_parser.set_defaults(handler = partial(handler, callback=callback))
+
+
+def register_update(parser: _SubParsersAction, handler, callback) -> None:
+    update_parser: ArgumentParser = parser.add_parser("update", help="update a document specified by it's id")
+    update_parser.add_argument(
+        "-i", "--id",
+        type = int,
+        required = True,
+        help = "the document ID, use the list command if you need to get the ID"
+    )
+    update_parser.add_argument(
+        "-t", "--title",
+        type = str,
+        default = None,
+        help = "updates the document title"
+    )
+    update_parser.add_argument(
+        "-e", "--expires",
+        type = str,
+        default = None,
+        help = "updates the document expiration date"
+    )
+    update_parser.add_argument(
+        "-n", "--notify",
+        type = int,
+        default = None,
+        help = "updates how many days to notify you before expiration"
+    )
+
+    update_parser.set_defaults(handler = partial(handler, callback=callback), status=None)

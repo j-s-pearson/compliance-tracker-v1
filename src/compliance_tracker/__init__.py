@@ -1,9 +1,9 @@
 import argparse
 
-from compliance_tracker.commands import register_add, register_list
+from compliance_tracker.commands import *
 from compliance_tracker.constants import DB_CONNECTION_STRING
 from compliance_tracker.db import Database
-from compliance_tracker.handlers import handler_add, handler_list
+from compliance_tracker.handlers import *
 
 
 def main() -> None:
@@ -16,6 +16,7 @@ def main() -> None:
 
     register_add(subparsers, handler_add, db.add)
     register_list(subparsers, handler_list, db.list)
+    register_update(subparsers, handler_update, db.update)
 
     args = parser.parse_args()
     args.handler(args)

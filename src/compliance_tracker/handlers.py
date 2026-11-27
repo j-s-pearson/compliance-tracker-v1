@@ -33,3 +33,29 @@ def handler_list(args: Namespace, callback) -> None:
     for doc in documents:
         print(f"{doc[0]:^3} | {doc[1]:<25} | {doc[2]:^10} | {doc[3]:^10} | {doc[4]:^10}")
     print("-" * 70)
+
+def handler_update(args: Namespace, callback) -> None:
+    if args.title == None and args.expires == None and args.notify == None:
+        print("nothing specified to update, expected at least a title, expiration date, or notification period")
+        return
+
+    if args.title != None:
+        args.title = args.title.strip()
+        if args.title == "":
+            print("title can't be updated to empty")
+
+    if args.expires != None:
+        try:
+            args.expires = date_to_iso(args.expires)
+        except ValueError as e:
+            print(e)
+            return
+        args.status = "expired" if is_before_now(args.expires) else "valid"
+
+    if args.notify != None and args.notify < 1:
+        print("can't have a notification period less than 1 day")
+        return
+
+    updated_at = get_now_iso()
+
+    callback(args.id, args.title, args.expires, args.notify, args.status, updated_at)
